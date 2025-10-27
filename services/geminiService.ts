@@ -1,6 +1,6 @@
 
 import { GoogleGenAI, Chat, Type, Content } from "@google/genai";
-import { DR_GOPALAN_PERSONA } from '../constants';
+import { HIPPOCRATES_PERSONA } from '../constants';
 import { getApPrompt } from '../prompts/ap';
 import { getHandoffPrompt } from '../prompts/handoff';
 import { getStickyNotePrompt } from '../prompts/stickyNote';
@@ -20,14 +20,14 @@ export const createChatSession = (history?: Content[]): Chat => {
     const chat = ai.chats.create({
       model: 'gemini-2.5-flash',
       config: {
-        systemInstruction: DR_GOPALAN_PERSONA,
+        systemInstruction: HIPPOCRATES_PERSONA,
       },
       history: history,
     });
     return chat;
   } catch (error) {
     console.error("Error creating chat session:", error);
-    throw new Error("Failed to create a session with Dr. Gopalan.");
+    throw new Error("Failed to create a session with Hippocrates.");
   }
 };
 
@@ -63,7 +63,7 @@ export const sendMessageStream = async (chat: Chat, message: string, conversatio
 
   } catch (error) {
     console.error("Error sending message to Gemini API:", error);
-    throw new Error("Failed to get a response from Dr. Gopalan.");
+    throw new Error("Failed to get a response from Hippocrates.");
   }
 };
 
@@ -112,6 +112,6 @@ export const generateLearningContent = async (conversationHistory: string): Prom
 
     } catch (error) {
         console.error("Error generating learning content:", error);
-        throw new Error("Failed to generate learning content from Dr. Gopalan.");
+        throw new Error("Failed to generate learning content from Hippocrates.");
     }
 };

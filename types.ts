@@ -3,7 +3,7 @@ import { Chat } from '@google/genai';
 
 export enum Sender {
   User = 'user',
-  DrGopalan = 'dr_gopalan',
+  Hippocrates = 'hippocrates',
 }
 
 export interface Message {

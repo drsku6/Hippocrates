@@ -5,7 +5,7 @@ import remarkGfm from 'remark-gfm';
 import { Sender, type Message, type ChatSession, type Session, CaseOfTheWeek, CurbsideConsult } from './types';
 import { COMMANDS } from './constants';
 import { createChatSession, sendMessageStream, generateLearningContent } from './services/geminiService';
-import { DrGopalanIcon, UserIcon, SendIcon, LoadingIcon, CopyIcon, CheckIcon, BookOpenIcon, ChevronDownIcon, TrashIcon } from './components/icons';
+import { HippocratesIcon, UserIcon, SendIcon, LoadingIcon, CopyIcon, CheckIcon, BookOpenIcon, ChevronDownIcon, TrashIcon } from './components/icons';
 import Feedback from './components/Feedback';
 import { Content } from '@google/genai';
 
@@ -63,7 +63,7 @@ const MessageBubble: React.FC<{ message: Message; onRetry: () => void; }> = ({ m
 
   return (
     <div className={`flex items-start gap-4 my-4 ${isUser ? 'justify-end' : ''}`}>
-      {!isUser && <div className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-text-secondary flex items-center justify-center"><DrGopalanIcon className="w-5 h-5 text-white" /></div>}
+      {!isUser && <div className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-text-secondary flex items-center justify-center"><HippocratesIcon className="w-5 h-5 text-white" /></div>}
       <div className={`relative max-w-3xl w-full p-4 rounded-lg shadow-md ${isUser ? 'bg-brand-accent text-white rounded-br-none max-w-2xl' : 'bg-brand-surface text-brand-text-primary rounded-bl-none'}`}>
         {!isUser && message.content && message.status !== 'streaming' && (
             <button
@@ -87,7 +87,7 @@ const MessageBubble: React.FC<{ message: Message; onRetry: () => void; }> = ({ m
                     components={{ p: React.Fragment }} 
                   />
                 ) : (
-                  <span>Dr. Gopalan is thinking...</span>
+                  <span>Hippocrates is thinking...</span>
                 )}
               </div>
             ) : (
@@ -206,7 +206,7 @@ const LearningHub: React.FC<{
                     {isLoading && (
                         <div className="flex items-center justify-center p-10">
                             <LoadingIcon className="w-8 h-8 mr-4" />
-                            <span className="text-lg text-brand-text-secondary">Dr. Gopalan is analyzing your cases...</span>
+                            <span className="text-lg text-brand-text-secondary">Hippocrates is analyzing your cases...</span>
                         </div>
                     )}
                     {error && !isLoading && (
@@ -310,7 +310,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     try {
-      const savedSessions = localStorage.getItem('dr-gopalan-sessions');
+      const savedSessions = localStorage.getItem('hippocrates-sessions');
       if (savedSessions) {
         const parsedSessions = JSON.parse(savedSessions);
         setSessions(parsedSessions);
@@ -330,7 +330,7 @@ const App: React.FC = () => {
 
   useEffect(() => {
     if (sessions.length > 0) {
-      localStorage.setItem('dr-gopalan-sessions', JSON.stringify(sessions));
+      localStorage.setItem('hippocrates-sessions', JSON.stringify(sessions));
     }
   }, [sessions]);
 
@@ -415,7 +415,7 @@ const App: React.FC = () => {
             }
         }
         if (remainingSessions.length === 0) {
-             localStorage.removeItem('dr-gopalan-sessions');
+             localStorage.removeItem('hippocrates-sessions');
         }
         return remainingSessions;
     });
@@ -430,7 +430,7 @@ const App: React.FC = () => {
 
     const currentSessionId = activeSessionId;
     const conversationHistory = messages
-        .map(m => `${m.sender === Sender.User ? 'User' : 'Dr. Gopalan'}: ${m.content}`)
+        .map(m => `${m.sender === Sender.User ? 'User' : 'Hippocrates'}: ${m.content}`)
         .join('\n\n');
 
     try {
@@ -441,7 +441,7 @@ const App: React.FC = () => {
         updateMessageInSession(currentSessionId, prevMsgs => {
             const newMessages = [...prevMsgs];
             const lastMessage = newMessages[newMessages.length - 1];
-            if (lastMessage?.sender === Sender.DrGopalan) {
+            if (lastMessage?.sender === Sender.Hippocrates) {
               newMessages[newMessages.length - 1] = { ...lastMessage, content: responseText };
             }
             return newMessages;
@@ -450,7 +450,7 @@ const App: React.FC = () => {
       updateMessageInSession(currentSessionId, prevMsgs => {
           const newMessages = [...prevMsgs];
           const lastMessage = newMessages[newMessages.length - 1];
-          if (lastMessage?.sender === Sender.DrGopalan) {
+          if (lastMessage?.sender === Sender.Hippocrates) {
             newMessages[newMessages.length - 1] = { ...lastMessage, status: 'complete' };
           }
           return newMessages;
@@ -461,11 +461,11 @@ const App: React.FC = () => {
        updateMessageInSession(currentSessionId, prevMsgs => {
           const newMessages = [...prevMsgs];
           const lastMessage = newMessages[newMessages.length - 1];
-          if (lastMessage?.sender === Sender.DrGopalan) {
+          if (lastMessage?.sender === Sender.Hippocrates) {
             newMessages[newMessages.length - 1] = { 
                ...lastMessage, 
                status: 'error', 
-               content: `*(Dr. Gopalan apologizes. An error occurred. Please try again.)*\n\n**Error:** ${errorMessage}` 
+               content: `*(Hippocrates apologizes. An error occurred. Please try again.)*\n\n**Error:** ${errorMessage}` 
             };
           }
           return newMessages;
@@ -520,18 +520,18 @@ const App: React.FC = () => {
         const commandName = COMMANDS.find(cmd => content.toLowerCase().startsWith(cmd.toLowerCase()));
         if (commandName && commandName.startsWith('/generate')) {
             const docType = commandName.replace('/generate ', '').replace(/\b\w/g, l => l.toUpperCase());
-            loadingMessage = `Dr. Gopalan is generating the **${docType}**...`;
+            loadingMessage = `Hippocrates is generating the **${docType}**...`;
         }
     }
   
-    const drGopalanResponsePlaceholder: Message = {
-        sender: Sender.DrGopalan,
+    const hippocratesResponsePlaceholder: Message = {
+        sender: Sender.Hippocrates,
         content: '',
         timestamp: new Date().toLocaleTimeString(),
         status: 'streaming',
         loadingMessage,
     };
-    updateMessageInSession(activeSessionId, prev => [...prev, drGopalanResponsePlaceholder]);
+    updateMessageInSession(activeSessionId, prev => [...prev, hippocratesResponsePlaceholder]);
 
     await processStream(content);
   }, [isLoading, activeSessionId, sessions]);
@@ -552,13 +552,13 @@ const App: React.FC = () => {
 
     setSessions(prev => prev.map(s => s.id === activeSessionId ? { ...s, messages: messagesBeforeRetry } : s));
 
-    const drGopalanResponsePlaceholder: Message = {
-        sender: Sender.DrGopalan,
+    const hippocratesResponsePlaceholder: Message = {
+        sender: Sender.Hippocrates,
         content: '',
         timestamp: new Date().toLocaleTimeString(),
         status: 'streaming',
     };
-    updateMessageInSession(activeSessionId, prev => [...prev, drGopalanResponsePlaceholder]);
+    updateMessageInSession(activeSessionId, prev => [...prev, hippocratesResponsePlaceholder]);
 
     await processStream(lastUserMessage.content);
 }, [messages, activeSessionId, processStream]);
@@ -583,7 +583,7 @@ const App: React.FC = () => {
     try {
         const conversationHistory = messages
           .filter(m => m.status === 'complete')
-          .map(m => `${m.sender === Sender.User ? 'User' : 'Dr. Gopalan'}: ${m.content}`)
+          .map(m => `${m.sender === Sender.User ? 'User' : 'Hippocrates'}: ${m.content}`)
           .join('\n\n');
         
         if (!conversationHistory) {
@@ -630,7 +630,7 @@ const App: React.FC = () => {
         />
         <div className="flex-1 flex flex-col min-w-0">
             <header className="p-4 border-b border-brand-border bg-brand-surface flex-shrink-0 flex justify-between items-center">
-                <h1 className="text-xl font-bold flex items-center"><DrGopalanIcon className="w-6 h-6 mr-3 text-brand-accent"/>Consultation with Dr. Gopalan</h1>
+                <h1 className="text-xl font-bold flex items-center"><HippocratesIcon className="w-6 h-6 mr-3 text-brand-accent"/>Consultation with Hippocrates</h1>
                 <div className="flex items-center gap-2">
                     <button
                         onClick={() => {
@@ -651,7 +651,7 @@ const App: React.FC = () => {
             <main ref={chatContainerRef} className="flex-grow p-6 overflow-y-auto w-full max-w-5xl mx-auto">
             {messages.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-full text-center text-brand-text-secondary p-8">
-                <DrGopalanIcon className="w-24 h-24 mb-6 text-brand-border" />
+                <HippocratesIcon className="w-24 h-24 mb-6 text-brand-border" />
                 <h2 className="text-2xl font-bold text-brand-text-primary mb-2">Begin Your Consultation</h2>
                 <p className="max-w-md mb-4">
                     Describe your patient's case to start the conversation.
