@@ -1,5 +1,5 @@
 {
-  "name": "EvidenceFlowAI",
+  "name": "Hippocrates2",
   "description": "An AI agent to act as a personal, on-demand mentor and clinical co-pilot for inpatient hospital medicine. EvidenceFlowAI helps manage complex patients, navigate hospital systems, and develop sophisticated clinical reasoning skills.",
   "requestFramePermissions": []
 }

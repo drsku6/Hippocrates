@@ -52,4 +52,6 @@ export const COMMANDS = [
   '/generate short presentation',
   '/generate sticky note',
   '/generate handoff',
+  '/ask_the_expert',
+  '/run_simulation',
 ];
