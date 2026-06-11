@@ -4,7 +4,7 @@ import remarkGfm from 'remark-gfm';
 import { Sender, type Message, type ChatSession, type Session } from './types';
 import { COMMANDS } from './constants';
 import { createChatSession, sendMessageStream } from './services/geminiService';
-import { EvidenceFlowAIIcon, UserIcon, SendIcon, LoadingIcon, CopyIcon, CheckIcon, BookOpenIcon, TrashIcon, ChevronLeftIcon, ChevronRightIcon, ChatBubbleLeftRightIcon } from './components/icons';
+import { UserIcon, SendIcon, LoadingIcon, CopyIcon, CheckIcon, BookOpenIcon, TrashIcon, ChevronLeftIcon, ChevronRightIcon, ChatBubbleLeftRightIcon } from './components/icons';
 import { Content } from '@google/genai';
 
 const markdownComponents = {
@@ -135,7 +135,7 @@ const MessageBubble: React.FC<{
   return (
     <div className="group flex items-start gap-4 my-6 select-text">
       <div className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-surface border border-brand-border/30 shadow-xs flex items-center justify-center">
-        <EvidenceFlowAIIcon className="w-5 h-5 text-brand-accent" />
+        <img src="/logo.svg" className="h-6 w-auto" alt="AI Avatar" />
       </div>
       <div className="flex-1 min-w-0 text-brand-text-primary text-[13px] md:text-[13.5px] leading-relaxed space-y-3 pt-0.5">
         {(message.status === 'streaming' && message.content === '') ? (
@@ -894,9 +894,9 @@ const App: React.FC = () => {
 
         <div className="flex-1 flex flex-col min-w-0">
             <header className="border-b border-brand-border/30 bg-brand-bg flex-shrink-0">
-                <div className="w-full px-6 md:px-12 lg:px-16 xl:px-24 2xl:px-32 py-4">
+                <div className="w-full px-6 md:px-12 lg:px-16 xl:px-24 2xl:px-32 py-3">
                     <h1 className="text-xl font-bold flex items-center tracking-tight text-brand-text-primary">
-                        <EvidenceFlowAIIcon className="w-6 h-6 mr-2.5 text-brand-accent" />
+                        <img src="/logo.svg" className="h-12 w-auto mr-3" alt="EvidenceFlowAI Logo" />
                         <span>EvidenceFlowAI</span>
                     </h1>
                 </div>
