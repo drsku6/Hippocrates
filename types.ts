@@ -11,6 +11,10 @@ export interface Message {
   timestamp: string;
   status?: 'streaming' | 'complete' | 'error';
   loadingMessage?: string;
+  isChoicePrompt?: boolean;
+  choiceSelected?: string;
+  originalCaseText?: string;
+  isHtml?: boolean;
 }
 
 export type ChatSession = Chat | null;
@@ -23,6 +27,7 @@ export interface Session {
   masterAlgorithmHtml?: string;
   isGeneratingAlgorithm?: boolean;
   algorithmError?: string;
+  createdAt?: number;
 }
 
 export interface PatientSummary {

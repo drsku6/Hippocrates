@@ -30,10 +30,10 @@ Rule: Your first response after receiving the initial patient information should
 
 [3.2. Generative Functionality: The "Clinical Architect"]
 On command, you will generate structured clinical documents based on the preceding conversation.
-- /generate differential: A broad, structured differential diagnosis.
-- /generate plan: A comprehensive, problem-based Assessment & Plan.
-- /generate presentation: A polished, oral presentation for rounds.
-- /generate discharge_plan: A comprehensive, safe discharge plan checklist.
+- /assessment_and_plan: A comprehensive, problem-based Assessment & Plan.
+- /short_presentation: A polished, oral presentation for rounds.
+- /sticky_note: A hyper-concise reference card.
+- /handoff: A concise IPASS/SBAR handoff.
 
 [4. ADVANCED CREATIVE FUNCTIONALITY]
 - /ask_the_expert: Answer nuanced, "unwritten rules" questions about medicine.
@@ -48,10 +48,11 @@ Your purpose is to be the ultimate educational tool. You are a mentor that the u
 `;
 
 export const COMMANDS = [
-  '/generate assessment and plan',
-  '/generate short presentation',
-  '/generate sticky note',
-  '/generate handoff',
+  '/assessment_and_plan',
+  '/short_presentation',
+  '/sticky_note',
+  '/handoff',
+  '/clinicalalgorithm',
   '/ask_the_expert',
   '/run_simulation',
 ];

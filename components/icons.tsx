@@ -98,3 +98,23 @@ export const ChatBubbleLeftRightIcon: React.FC<{ className?: string }> = ({ clas
         <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 3.75a.75.75 0 01.75.75v.511c0 .969-.616 1.81-1.5 2.097L3.6 7.828a.75.75 0 01-.925-.794l.284-.884C3.847 5.347 4.842 4.153 6.228 4.153h5.687a.75.75 0 00.75-.75V3a.75.75 0 00-.75-.75H6.228c-1.386 0-2.381 1.194-2.489 2.574l-.284.884a.75.75 0 00.925.794l.884-.284c.163-.052.335-.08.513-.08h1.884a.75.75 0 01.75.75v.511c0 .969.616 1.81 1.5 2.097l3.15 1.05a.75.75 0 00.925-.794l-.284-.884C15.153 7.153 14.158 6 12.772 6H7.085a.75.75 0 01-.75-.75V4.5A.75.75 0 017.085 3.75h1.165z" />
     </svg>
 );
+
+export const SparkleIcon: React.FC<{ className?: string }> = ({ className = "w-6 h-6" }) => (
+  <svg 
+    xmlns="http://www.w3.org/2000/svg" 
+    viewBox="0 0 24 24" 
+    className={className}
+  >
+    <defs>
+      <linearGradient id="gemini-sparkle-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#9b72ff" />
+        <stop offset="50%" stopColor="#4b90ff" />
+        <stop offset="100%" stopColor="#ff729f" />
+      </linearGradient>
+    </defs>
+    <path 
+      fill="url(#gemini-sparkle-grad)" 
+      d="M12 2c-.1 4.5-3.5 8-8 8.1v1.8c4.5.1 7.9 3.6 8 8.1h1.8c.1-4.5 3.6-8 8.1-8.1V10c-4.5-.1-8-3.6-8.1-8.1H12z" 
+    />
+  </svg>
+);

@@ -22,9 +22,15 @@ ${conversationHistory}
 };
 
 
-export const getMasterAlgorithmPrompt = (topic: string): string => {
+export const getMasterAlgorithmPrompt = (input: string): string => {
     return `You are an Expert Medical Educator and ABIM Test Strategist. Your goal is to create a high-yield, step-by-step thinking algorithm for board preparation.
-Generate a 'Master Algorithm' for the topic: "${topic}".
+
+Analyze the clinical topic or patient case details provided below:
+"${input}"
+
+If patient case details are provided, first determine the primary clinical diagnosis/topic.
+Then, generate a 'Master Algorithm' for that topic.
+
 INSTRUCTIONS:
 Your entire response MUST be a single string of well-formed HTML. Do NOT wrap it in JSON or markdown backticks. Start directly with the first HTML tag.
 Structure & Tone:

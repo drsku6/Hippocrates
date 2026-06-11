@@ -18,7 +18,7 @@ const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 export const createChatSession = (history?: Content[]): Chat => {
   try {
     const chat = ai.chats.create({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.5-flash',
       config: {
         systemInstruction: HIPPOCRATES_PERSONA,
       },
@@ -33,14 +33,24 @@ export const createChatSession = (history?: Content[]): Chat => {
 
 
 const getPromptForCommand = (command: string, conversationHistory: string): string | null => {
-    switch(command.trim().toLowerCase()) {
-        case '/generate assessment and plan':
+    const trimmedCmd = command.trim().toLowerCase();
+    if (trimmedCmd.startsWith('/clinicalalgorithm')) {
+        const topic = command.replace(/^\/clinicalalgorithm\s*/i, '').trim();
+        const input = topic || conversationHistory;
+        if (!input.trim()) {
+            return `Please specify a topic to generate an algorithm. For example, type '/clinicalalgorithm Hyponatremia' or describe a patient case first.`;
+        }
+        return getMasterAlgorithmPrompt(input);
+    }
+
+    switch(trimmedCmd) {
+        case '/assessment_and_plan':
             return getApPrompt(conversationHistory);
-        case '/generate sticky note':
+        case '/sticky_note':
             return getStickyNotePrompt(conversationHistory);
-        case '/generate handoff':
+        case '/handoff':
             return getHandoffPrompt(conversationHistory);
-        case '/generate short presentation':
+        case '/short_presentation':
             return getPresentationPrompt(conversationHistory);
         default:
             return null;
@@ -53,7 +63,7 @@ export const sendMessageStream = async (chat: Chat, message: string, conversatio
     if (commandPrompt) {
         // Commands are text-only, using flash for speed
         return ai.models.generateContentStream({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3.5-flash',
             contents: commandPrompt
         });
     }
@@ -71,7 +81,7 @@ export const generatePatientSummary = async (conversationHistory: string): Promi
     try {
         const prompt = getPatientSummaryPrompt(conversationHistory);
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash',
+            model: 'gemini-3.5-flash',
             contents: prompt,
             config: {
                 responseMimeType: 'application/json',
@@ -96,11 +106,11 @@ export const generatePatientSummary = async (conversationHistory: string): Promi
     }
 };
 
-export const generateMasterAlgorithm = async (topic: string): Promise<string> => {
+export const generateMasterAlgorithm = async (input: string): Promise<string> => {
     try {
-        const prompt = getMasterAlgorithmPrompt(topic);
+        const prompt = getMasterAlgorithmPrompt(input);
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-pro',
+            model: 'gemini-3.5-flash',
             contents: prompt,
         });
 
