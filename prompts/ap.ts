@@ -10,53 +10,44 @@ const masterPrompt = `**1. Persona & Role:** You are an expert AI clinical assis
 
 **3. Operational Workflow:** You will be provided with a block of raw CONVERSATION CONTEXT and a specific TASK PROMPT. Your job is to synthesize the CONVERSATION CONTEXT according to the instructions in the TASK PROMPT, while strictly following all of your core directives. Your final output should only be the requested clinical document.`;
 
-const taskPrompt = `Draft a comprehensive, problem-based Assessment and Plan (A&P) for a daily progress note, using the provided conversation context. The output must ONLY contain the Assessment & Plan section. Do NOT include "Subjective" or "Objective" sections. IMPORTANT: Do not hallucinate or use any information not present in the CONVERSATION CONTEXT.
+const taskPrompt = `Draft a comprehensive Assessment and Plan (A&P) using the provided conversation context. The output must ONLY contain the Assessment & Plan section. Do NOT include "Subjective" or "Objective" sections. IMPORTANT: Do not hallucinate or use any information not present in the CONVERSATION CONTEXT.
 
 **DIAGNOSIS & KNOWLEDGE BASE RAG INSTRUCTIONS:**
 You have been provided with a **TEMPLATE KNOWLEDGE BASE** below the conversation context. 
 1. **Diagnose:** First, figure out what is wrong with the patient based strictly on the CONVERSATION CONTEXT.
 2. **Search:** Search the TEMPLATE KNOWLEDGE BASE for the template that best matches your diagnosis.
-3. **Customize:** If you find a matching template, use its plan structure as your foundation. However, you MUST dynamically customize it by weaving in the patient's actual vitals, lab values, and history from the CONVERSATION CONTEXT. If no template perfectly matches the patient's condition, fall back to your general medical knowledge to construct an evidence-based plan.
+3. **Customize:** If you find a matching template, you MUST mirror its exact structure, headings, and bullet points. Do not invent your own structure. Fill in any bracketed placeholders (like [***]) and dynamically customize the text by weaving in the patient's actual vitals, lab values, and history from the CONVERSATION CONTEXT. If no template perfectly matches the patient's condition, fall back to your general medical knowledge to construct an evidence-based plan.
 
 **Instructions:**
 1.  **Structure:** Start directly with a main bold heading "**Assessment & Plan**".
-2.  **Acute:** Provide a numbered list (e.g., "1.", "2.") for each active, acute medical problem. Each numbered problem MUST follow this strict format:
-    - **Line 1 (Diagnosis):** The **Diagnosis Name** and its likely secondary cause (e.g., "Sepsis likely 2/2 Urosepsis"). This line MUST NOT contain the patient summary.
-    - **Line 2 (Summary):** After the diagnosis, there MUST be exactly one blank line. Then, on a new line, write a concise one-line summary including chief complaint and key data justifying the diagnosis (e.g., "Patient with right flank pain, HR 102, WBC 18.2, Cr 2.3"). This summary line MUST NOT contain the diagnosis name and age/sex.
-    - **Lines 3+ (Plan):** After the summary line, there MUST be exactly one blank line. Then, create the plan as a bulleted list. EVERY SINGLE plan item MUST start with a hyphen and a space. (Use the matching RAG template for this plan, customizing it with patient vitals/labs).
-3.  **Chronic Issues:** After the acute problems, **leave a blank line**, then create a bold heading "**Chronic Conditions**". Under this heading, create a bulleted list of stable conditions and their inpatient medication plans.
-4.  **Disposition:** After the chronic issues, **leave another blank line**, then create a bold heading "**Disposition**". Include a detailed plan for disposition, including any barriers.
-5.  **Use Markdown:** Structure the entire note with markdown as shown in the example. The headings for Chronic Conditions and Disposition MUST be preceded by a blank line for spacing.
+2.  **Acute Issues:** List the primary acute issues as a numbered list. Under each issue, provide a 1-2 sentence summary of the patient's presentation and key data justifying the diagnosis.
+3.  **Plan Formatting:** After the summary, insert the plan EXACTLY as formatted in the retrieved template (e.g., using the exact bullet points like "* Admit:", "* Monitoring:", "* Meds:", etc.). Replace generic recommendations with specific patient data where applicable.
+4.  **Chronic Issues:** After the acute problems, leave a blank line, then create a bold heading "**Chronic Conditions**". Create a bulleted list of stable conditions and their inpatient medication plans based on the patient context.
+5.  **Disposition:** After chronic issues, leave a blank line, then create a bold heading "**Disposition**". Include a detailed plan for disposition, including any barriers.
 
-**EXAMPLE:**
+**EXAMPLE OF EXPECTED OUTPUT STRUCTURE (Mirroring a RAG Template):**
 
 ### **Assessment & Plan**
-**Acute:**
-1.  **Urosepsis**
 
-    Patient right flank pain, HR 102, WBC 18.2, UA positive for UTI CT abdomen: pyelonephritis
+**1. Status post-cardiac arrest with ROSC**
+Patient is a 65M presenting after witnessed out-of-hospital cardiac arrest. Initial rhythm VFib, achieved ROSC after 2 shocks and 1mg epinephrine. Currently intubated, HR 110, MAP 55 on norepi.
 
-    - IV Ceftriaxone x 7 days
-    - Pending admission blood culture, Urine culture
-    - continue to monitor abdominal pain, diet tolerance, ambulation, vitals and WBC count.
-
-2.  **AKI on CKD likely 2/2 Urosepsis**
-
-    Cr 2.3, baseline 1.4, s/p IV normal saline 2L bolus
-
-    - IV NS 75ml/hr, re-evaluate for IVF once patient is drinking
-    - Strict I/O, monitor daily BMP.
-
+**Plan:**
+* **Admit:** ICU/CCU.
+* **Monitoring:** Continuous Telemetry and Pulse Oximetry maintaining SpO2 92–98%.
+* **Neuro Checks:** Serial neurological exams; Temperature Control maintaining normothermia (32 - 37.5°C) for at least 36 hours. cEEG pending.
+* **Meds:** Maintain MAP >65 using Norepinephrine (currently at 0.05 mcg/kg/min).
+* **Breathing Treatment:** Maintain ventilation with PaCO2 35–45; currently on Propofol for sedation.
+* **Consults:** Neurology; Cardiology for possible cath.
+* **Diagnostics:** 12-lead ECG showed no STEMI. Pending stat BMP, CBC, LFTs, lactate, T&S, troponin.
 
 ### **Chronic Conditions**
-- HTN: amlodipine. Hold if SBP < 110.
-- DM2: Hold metformin due to AKI. Continue inpatient SSI coverage.
-- HLD: atorvastatin.
-
+* **HTN:** Home amlodipine held given current shock.
+* **HLD:** Home atorvastatin continued via OGT.
 
 ### **Disposition**
-- Patient is clinically improving and stable. Likely can be discharged tomorrow or the day after.
-- **Barriers to Discharge:** Completion of IV antibiotic course, ensuring renal function stability off of IVF.`;
+* Patient is critically ill in the ICU.
+* **Barriers to Discharge:** Resolution of shock, extubation, neurological prognostication.`;
 
 export const getApPrompt = (conversationHistory: string): string => {
   const templateString = JSON.stringify(apTemplatesData.sections, null, 2);
