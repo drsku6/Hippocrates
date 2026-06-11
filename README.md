@@ -12,9 +12,9 @@
 
 *   **🎓 Socratic Preceptor (Default Mode)**
     When you describe a patient case, Hippocrates doesn't simply give you answers. It asks structured, probing questions (categorized by organ system, pre-test probability, and "can't miss" diagnoses) to sharpen your clinical reasoning.
-*   **📝 Generative Clinical Scribes**
-    Synthesizes the conversation history instantly into EHR-ready medical documentation using specialized templates:
-    *   `/assessment_and_plan` - Daily progress note format with acute and chronic problems.
+*   **📝 Generative Clinical Scribes (Powered by Local RAG)**
+    Synthesizes the conversation history instantly into EHR-ready medical documentation using a localized Retrieval-Augmented Generation (RAG) architecture:
+    *   `/assessment_and_plan` - Dynamically retrieves templates from your custom `apTemplates.ts` knowledge base, matching the patient's condition to your preferred hospital protocols, then weaves in live patient data (vitals, labs).
     *   `/short_presentation` - Structured notes formatted for reading aloud on morning rounds.
     *   `/handoff` - A concise IPASS/SBAR written handoff for covering clinicians.
     *   `/sticky_note` - A hyper-concise, quick-reference dashboard of the patient.
@@ -79,6 +79,9 @@ Hippocrates is grounded by a custom medical persona defined in `constants.ts`. W
 
 ### Unified Model Architecture
 To optimize speed, cost, and latency, Hippocrates runs all actions—including Socratic chats, patient summaries, IPASS/SBAR handoffs, progress plan formatting, and board-style clinical algorithms—on **`gemini-3.5-flash`**.
+
+### Local RAG & Knowledge Base
+The `/assessment_and_plan` generator acts as a **Retrieval-Augmented Generation (RAG)** engine. When triggered, the application serializes the `prompts/apTemplates.ts` file (a custom 130KB+ library of hospital protocols and guidelines) directly into Gemini's 1M token context window. The model reads the raw patient conversation, acts as a diagnostic engine to identify the primary pathology, searches the injected templates for a matching protocol, and dynamically customizes the boilerplate text with the patient's actual vitals, lab results, and history.
 
 ---
 

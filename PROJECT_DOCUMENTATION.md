@@ -24,7 +24,10 @@ graph TD
         learning[learning.ts]
         presentation[presentation.ts]
         sticky[stickyNote.ts]
+        templates[(apTemplates.ts / Knowledge Base)]
     end
+    
+    templates --> |RAG Injection| ap
     
     GS -.-> |Injects Context| Prompts_Layer
 ```
@@ -118,6 +121,7 @@ The prompts isolate the AI from direct user phrasing to enforce strict structure
   - Strict adherence to formatting rules (e.g., progress plans must start with a hyphen and a space).
   - Explicit grounding (no guessing clinical details not in the context).
   - Concise layout tailored for medical professionals.
+  - **Local RAG Integration (`ap.ts`)**: The Assessment & Plan generator dynamically injects the `prompts/apTemplates.ts` knowledge base into the prompt context. The model is instructed to diagnose the patient, search the templates for a matching protocol, and perfectly mirror the template's structure (headings, bullet points) while weaving in the patient's live data.
 * **Master Algorithm Prompt (`learning.ts`)**: Commands `gemini-3.5-flash` to output an instructional board-prep algorithm. It enforces structured HTML using Tailwind CSS classes, comparative buckets, vignette keywords, and actionable "Best Next Steps".
 
 ---
