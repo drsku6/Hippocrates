@@ -71,7 +71,7 @@ const Feedback: React.FC = () => {
                             <form onSubmit={handleSubmit}>
                                 <main className="p-6 space-y-6">
                                     <div>
-                                        <label className="block text-sm font-medium text-brand-text-primary mb-2">How would you rate Hippocrates's responses?</label>
+                                        <label className="block text-sm font-medium text-brand-text-primary mb-2">How would you rate EvidenceFlowAI's responses?</label>
                                         <div className="flex items-center gap-1">
                                             {[1, 2, 3, 4, 5].map((star) => (
                                                 <button

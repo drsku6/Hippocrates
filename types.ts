@@ -2,7 +2,7 @@ import { Chat } from '@google/genai';
 
 export enum Sender {
   User = 'user',
-  Hippocrates = 'hippocrates',
+  EvidenceFlowAI = 'EvidenceFlowAI',
 }
 
 export interface Message {

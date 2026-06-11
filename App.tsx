@@ -4,7 +4,7 @@ import remarkGfm from 'remark-gfm';
 import { Sender, type Message, type ChatSession, type Session } from './types';
 import { COMMANDS } from './constants';
 import { createChatSession, sendMessageStream } from './services/geminiService';
-import { HippocratesIcon, UserIcon, SendIcon, LoadingIcon, CopyIcon, CheckIcon, BookOpenIcon, TrashIcon, ChevronLeftIcon, ChevronRightIcon, ChatBubbleLeftRightIcon } from './components/icons';
+import { EvidenceFlowAIIcon, UserIcon, SendIcon, LoadingIcon, CopyIcon, CheckIcon, BookOpenIcon, TrashIcon, ChevronLeftIcon, ChevronRightIcon, ChatBubbleLeftRightIcon } from './components/icons';
 import { Content } from '@google/genai';
 
 const markdownComponents = {
@@ -135,7 +135,7 @@ const MessageBubble: React.FC<{
   return (
     <div className="group flex items-start gap-4 my-6 select-text">
       <div className="flex-shrink-0 w-8 h-8 rounded-full bg-brand-surface border border-brand-border/30 shadow-xs flex items-center justify-center">
-        <HippocratesIcon className="w-5 h-5 text-brand-accent" />
+        <EvidenceFlowAIIcon className="w-5 h-5 text-brand-accent" />
       </div>
       <div className="flex-1 min-w-0 text-brand-text-primary text-[13px] md:text-[13.5px] leading-relaxed space-y-3 pt-0.5">
         {(message.status === 'streaming' && message.content === '') ? (
@@ -147,7 +147,7 @@ const MessageBubble: React.FC<{
                 components={{ p: React.Fragment }} 
               />
             ) : (
-              <span className="animate-pulse">Hippocrates is thinking...</span>
+              <span className="animate-pulse">EvidenceFlowAI is thinking...</span>
             )}
           </div>
         ) : message.isHtml ? (
@@ -450,7 +450,7 @@ const defaultSessionId = crypto.randomUUID();
 const App: React.FC = () => {
   const [sessions, setSessions] = useState<Session[]>(() => {
     try {
-      const savedSessions = localStorage.getItem('hippocrates-sessions');
+      const savedSessions = localStorage.getItem('EvidenceFlowAI-sessions');
       if (savedSessions) {
         const parsedSessions = JSON.parse(savedSessions);
         if (parsedSessions.length > 0) {
@@ -470,7 +470,7 @@ const App: React.FC = () => {
 
   const [activeSessionId, setActiveSessionId] = useState<string>(() => {
     try {
-      const savedSessions = localStorage.getItem('hippocrates-sessions');
+      const savedSessions = localStorage.getItem('EvidenceFlowAI-sessions');
       if (savedSessions) {
         const parsedSessions = JSON.parse(savedSessions);
         if (parsedSessions.length > 0) {
@@ -500,9 +500,9 @@ const App: React.FC = () => {
   useEffect(() => {
     const sessionsToSave = sessions.filter(s => s.messages.length > 0);
     if (sessionsToSave.length > 0) {
-      localStorage.setItem('hippocrates-sessions', JSON.stringify(sessionsToSave));
+      localStorage.setItem('EvidenceFlowAI-sessions', JSON.stringify(sessionsToSave));
     } else {
-      localStorage.removeItem('hippocrates-sessions');
+      localStorage.removeItem('EvidenceFlowAI-sessions');
     }
   }, [sessions]);
 
@@ -596,7 +596,7 @@ const App: React.FC = () => {
           createdAt: Date.now(),
         };
         setActiveSessionId(newSessionId);
-        localStorage.removeItem('hippocrates-sessions');
+        localStorage.removeItem('EvidenceFlowAI-sessions');
         return [newSession];
       }
 
@@ -620,7 +620,7 @@ const App: React.FC = () => {
 
     const currentSessionId = activeSessionId;
     const conversationHistory = messages
-        .map(m => `${m.sender === Sender.User ? 'User' : 'Hippocrates'}: ${m.content}`)
+        .map(m => `${m.sender === Sender.User ? 'User' : 'EvidenceFlowAI'}: ${m.content}`)
         .join('\n\n');
 
 
@@ -633,7 +633,7 @@ const App: React.FC = () => {
         updateMessageInSession(currentSessionId, prevMsgs => {
             const newMessages = [...prevMsgs];
             const lastMessage = newMessages[newMessages.length - 1];
-            if (lastMessage?.sender === Sender.Hippocrates) {
+            if (lastMessage?.sender === Sender.EvidenceFlowAI) {
               newMessages[newMessages.length - 1] = { ...lastMessage, content: responseText };
             }
             return newMessages;
@@ -642,7 +642,7 @@ const App: React.FC = () => {
       updateMessageInSession(currentSessionId, prevMsgs => {
           const newMessages = [...prevMsgs];
           const lastMessage = newMessages[newMessages.length - 1];
-          if (lastMessage?.sender === Sender.Hippocrates) {
+          if (lastMessage?.sender === Sender.EvidenceFlowAI) {
             newMessages[newMessages.length - 1] = { ...lastMessage, status: 'complete' };
           }
           return newMessages;
@@ -653,11 +653,11 @@ const App: React.FC = () => {
        updateMessageInSession(currentSessionId, prevMsgs => {
           const newMessages = [...prevMsgs];
           const lastMessage = newMessages[newMessages.length - 1];
-          if (lastMessage?.sender === Sender.Hippocrates) {
+          if (lastMessage?.sender === Sender.EvidenceFlowAI) {
             newMessages[newMessages.length - 1] = { 
                ...lastMessage, 
                status: 'error', 
-               content: `*(Hippocrates apologizes. An error occurred. Please try again.)*\n\n**Error:** ${errorMessage}` 
+               content: `*(EvidenceFlowAI apologizes. An error occurred. Please try again.)*\n\n**Error:** ${errorMessage}` 
             };
           }
           return newMessages;
@@ -698,7 +698,7 @@ const App: React.FC = () => {
 
     if (isFirstUserMessage && !content.startsWith('/')) {
       const choiceMessage: Message = {
-        sender: Sender.Hippocrates,
+        sender: Sender.EvidenceFlowAI,
         content: "Please choose how you would like to proceed with this patient case:",
         timestamp: new Date().toLocaleTimeString(),
         status: 'complete',
@@ -754,24 +754,24 @@ const App: React.FC = () => {
                 commandName === '/sticky_note' || 
                 commandName === '/handoff') {
                 const docType = commandName.replace('/', '').replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-                loadingMessage = `Hippocrates is generating the **${docType}**...`;
+                loadingMessage = `EvidenceFlowAI is generating the **${docType}**...`;
             } else if (commandName.startsWith('/clinical')) {
                 const topic = content.replace(/^\/clinicalalgorithm\s*/i, '').trim();
-                loadingMessage = `Hippocrates is generating the clinical algorithm for **${topic || 'your topic'}**...`;
+                loadingMessage = `EvidenceFlowAI is generating the clinical algorithm for **${topic || 'your topic'}**...`;
                 isHtml = true;
             }
         }
     }
   
-    const hippocratesResponsePlaceholder: Message = {
-        sender: Sender.Hippocrates,
+    const EvidenceFlowAIResponsePlaceholder: Message = {
+        sender: Sender.EvidenceFlowAI,
         content: '',
         timestamp: new Date().toLocaleTimeString(),
         status: 'streaming',
         loadingMessage,
         isHtml,
     };
-    updateMessageInSession(activeSessionId, prev => [...prev, hippocratesResponsePlaceholder]);
+    updateMessageInSession(activeSessionId, prev => [...prev, EvidenceFlowAIResponsePlaceholder]);
 
     await processStream(content);
   }, [isLoading, activeSessionId, sessions, processStream]);
@@ -803,7 +803,7 @@ const App: React.FC = () => {
       setIsLoading(true);
       setError(null);
       const placeholder: Message = {
-        sender: Sender.Hippocrates,
+        sender: Sender.EvidenceFlowAI,
         content: '',
         timestamp: new Date().toLocaleTimeString(),
         status: 'streaming',
@@ -824,13 +824,13 @@ const App: React.FC = () => {
 
     setSessions(prev => prev.map(s => s.id === activeSessionId ? { ...s, messages: messagesBeforeRetry } : s));
 
-    const hippocratesResponsePlaceholder: Message = {
-        sender: Sender.Hippocrates,
+    const EvidenceFlowAIResponsePlaceholder: Message = {
+        sender: Sender.EvidenceFlowAI,
         content: '',
         timestamp: new Date().toLocaleTimeString(),
         status: 'streaming',
     };
-    updateMessageInSession(activeSessionId, prev => [...prev, hippocratesResponsePlaceholder]);
+    updateMessageInSession(activeSessionId, prev => [...prev, EvidenceFlowAIResponsePlaceholder]);
 
     await processStream(lastUserMessage.content);
 }, [messages, activeSessionId, processStream]);
@@ -895,8 +895,8 @@ const App: React.FC = () => {
             <header className="border-b border-brand-border/30 bg-brand-bg flex-shrink-0">
                 <div className="w-full px-6 md:px-12 lg:px-16 xl:px-24 2xl:px-32 py-4">
                     <h1 className="text-xl font-bold flex items-center tracking-tight text-brand-text-primary">
-                        <HippocratesIcon className="w-6 h-6 mr-2.5 text-brand-accent" />
-                        <span>Hippocrates</span>
+                        <EvidenceFlowAIIcon className="w-6 h-6 mr-2.5 text-brand-accent" />
+                        <span>EvidenceFlowAI</span>
                     </h1>
                 </div>
             </header>

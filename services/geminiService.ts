@@ -1,6 +1,6 @@
 
 import { GoogleGenAI, Chat, Type, Content } from "@google/genai";
-import { HIPPOCRATES_PERSONA } from '../constants';
+import { EVIDENCEFLOW_PERSONA } from '../constants';
 import { getApPrompt } from '../prompts/ap';
 import { getHandoffPrompt } from '../prompts/handoff';
 import { getStickyNotePrompt } from '../prompts/stickyNote';
@@ -20,14 +20,14 @@ export const createChatSession = (history?: Content[]): Chat => {
     const chat = ai.chats.create({
       model: 'gemini-3.5-flash',
       config: {
-        systemInstruction: HIPPOCRATES_PERSONA,
+        systemInstruction: EVIDENCEFLOW_PERSONA,
       },
       history: history,
     });
     return chat;
   } catch (error) {
     console.error("Error creating chat session:", error);
-    throw new Error("Failed to create a session with Hippocrates.");
+    throw new Error("Failed to create a session with EvidenceFlowAI.");
   }
 };
 
@@ -73,7 +73,7 @@ export const sendMessageStream = async (chat: Chat, message: string, conversatio
 
   } catch (error) {
     console.error("Error sending message to Gemini API:", error);
-    throw new Error("Failed to get a response from Hippocrates.");
+    throw new Error("Failed to get a response from EvidenceFlowAI.");
   }
 };
 
@@ -102,7 +102,7 @@ export const generatePatientSummary = async (conversationHistory: string): Promi
 
     } catch (error) {
         console.error("Error generating patient summary:", error);
-        throw new Error("Failed to generate patient summary from Hippocrates.");
+        throw new Error("Failed to generate patient summary from EvidenceFlowAI.");
     }
 };
 
@@ -118,6 +118,6 @@ export const generateMasterAlgorithm = async (input: string): Promise<string> =>
 
     } catch (error) {
         console.error("Error generating master algorithm:", error);
-        throw new Error("Failed to generate master algorithm from Hippocrates.");
+        throw new Error("Failed to generate master algorithm from EvidenceFlowAI.");
     }
 };

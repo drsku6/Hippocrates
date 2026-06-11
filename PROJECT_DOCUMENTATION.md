@@ -1,18 +1,18 @@
-# Hippocrates: AI Hospitalist Mentor & Clinical Co-Pilot
+# EvidenceFlowAI: AI Hospitalist Mentor & Clinical Co-Pilot
 ## Project Documentation
 
-**Hippocrates** is an open-source, persona-driven clinical AI copilot. Built on top of **Gemini 3.5 Flash** for blazing-fast inference, Hippocrates uses dynamic system prompting to shift between highly specialized medical personas—acting as either a Socratic medical tutor or a direct, high-level attending physician. It serves as an interactive, web-based reasoning engine for medical professionals and hospitalists to augment clinical decision-making, generate structured documentation, and create board-style clinical algorithms.
+**EvidenceFlowAI** is an open-source, persona-driven clinical AI copilot. Built on top of **Gemini 3.5 Flash** for blazing-fast inference, EvidenceFlowAI uses dynamic system prompting to shift between highly specialized medical personas—acting as either a Socratic medical tutor or a direct, high-level attending physician. It serves as an interactive, web-based reasoning engine for medical professionals and hospitalists to augment clinical decision-making, generate structured documentation, and create board-style clinical algorithms.
 
 ---
 
 ## 🏗️ System Architecture & Data Flow
 
-Hippocrates is designed as a client-side single-page application (SPA). It communicates directly with Google's Gemini APIs from the frontend, ensuring minimal latency and zero middle-tier backend requirements.
+EvidenceFlowAI is designed as a client-side single-page application (SPA). It communicates directly with Google's Gemini APIs from the frontend, ensuring minimal latency and zero middle-tier backend requirements.
 
 ```mermaid
 graph TD
     User([User / Clinician]) <--> |React UI / Chat| App[App.tsx Orchestrator]
-    App <--> |Local Storage| LS[(Local Storage: hippocrates-sessions)]
+    App <--> |Local Storage| LS[(Local Storage: EvidenceFlowAI-sessions)]
     App --> |Conversational Messages| GS[geminiService.ts]
     App --> |Slash Commands / Topic Input| GS
     GS --> |gemini-3.5-flash / System Persona| G_API[Gemini API]
@@ -38,7 +38,7 @@ graph TD
 3. **Execution**:
    - If **Socratic Mentorship** is clicked, the app sends the patient details to the Socratic chat session (`gemini-3.5-flash`).
    - If any **Generative Command** is clicked, the app appends the corresponding command (e.g., `/assessment_and_plan`) and streams the formatted output.
-4. **Local Persistence**: Patient sessions, chat logs, summaries, and generated algorithms are automatically serialized and saved to `localStorage` under `hippocrates-sessions`.
+4. **Local Persistence**: Patient sessions, chat logs, summaries, and generated algorithms are automatically serialized and saved to `localStorage` under `EvidenceFlowAI-sessions`.
 5. **Document Generation**: If a user runs a slash command at any point (e.g., `/handoff`), the system retrieves the full chat history, formats it, and feeds it into a specialized prompt template from the `prompts/` directory to generate structured, guidelines-compliant clinical documents.
 6. **Educational Review (Master Algorithm)**: The user can type `/clinicalalgorithm [topic]` directly in the chat input. The system prompts the `gemini-3.5-flash` model to build an interactive, high-yield clinical thinking path (ABIM board-prep style) for that topic, rendering it directly inside the message feed.
 
@@ -53,7 +53,7 @@ graph TD
 
 * **Frontend Framework**: [React 19](https://react.dev) (Functional components, hooks, refs, and contexts)
 * **Build System & Dev Server**: [Vite 6](https://vite.dev) (Fast, ESM-based bundling)
-* **Styling**: [Tailwind CSS](https://tailwindcss.com) (Loaded client-side via CDN with theme extensions defined in [index.html](file:///Users/sku/drsku6/hippocrates/index.html))
+* **Styling**: [Tailwind CSS](https://tailwindcss.com) (Loaded client-side via CDN with theme extensions defined in [index.html](file:///Users/sku/drsku6/EvidenceFlowAI/index.html))
 * **Language**: [TypeScript 5](https://www.typescriptlang.org) (Rigorous typing for application models, messages, and API payloads)
 * **LLM Integration**: [@google/genai SDK v1.25.0](https://www.npmjs.com/package/@google/genai) (Official Google GenAI SDK using `GoogleGenAI` class and streaming utilities)
 * **Markdown Rendering**: `react-markdown` and `remark-gfm` (Ensures clean, structured display of clinical guidelines, lists, and bold callouts in chat bubbles)
@@ -63,7 +63,7 @@ graph TD
 ## 📁 Project Directory Structure
 
 ```
-hippocrates/
+EvidenceFlowAI/
 ├── components/
 │   ├── Feedback.tsx        # Floating feedback modal with rating and comment capture
 │   └── icons.tsx           # Collection of SVG icons used throughout the UI
@@ -89,14 +89,14 @@ hippocrates/
 
 ## 🧩 Component & Service Breakdown
 
-### 1. Main Application Orchestrator ([App.tsx](file:///Users/sku/drsku6/hippocrates/App.tsx))
+### 1. Main Application Orchestrator ([App.tsx](file:///Users/sku/drsku6/EvidenceFlowAI/App.tsx))
 Manages the application state, including:
 * **Sidebar Resize**: Implements a custom mouse move/up listener supporting smooth dragging of the navigation panel (between 200px and 500px).
 * **Patient Session Switcher**: Detects existing patient sessions in `localStorage`, creates unique session IDs using `crypto.randomUUID()`, and manages chat logs.
 * **Message Router**: Intercepts chat submissions. Regular text triggers Socratic responses, while slash commands (e.g. `/generate...`) trigger streaming document outputs.
 * **Message Bubbles**: Renders custom markdown configurations using a fluid `max-w-none` prose setup, handles errors, and includes a "copy-to-clipboard" action for quick copy/pasting into EHR systems.
 
-### 2. Service Layer ([services/geminiService.ts](file:///Users/sku/drsku6/hippocrates/services/geminiService.ts))
+### 2. Service Layer ([services/geminiService.ts](file:///Users/sku/drsku6/EvidenceFlowAI/services/geminiService.ts))
 Handles the interface with the `@google/genai` API:
 * **Session Initialization**: Creates a chat session using `ai.chats.create()`.
 * **Streaming Responses**: Invokes `ai.models.generateContentStream()` or `chat.sendMessageStream()` to stream AI responses to the UI in real-time, providing immediate feedback.
@@ -116,7 +116,7 @@ Handles the interface with the `@google/genai` API:
 
 ### 3. Prompt Engineering Architecture (`prompts/`)
 The prompts isolate the AI from direct user phrasing to enforce strict structure and medical accuracy:
-* **Socratic Persona (`HIPPOCRATES_PERSONA` in [constants.ts](file:///Users/sku/drsku6/hippocrates/constants.ts))**: Instructs the model to act as Socratic hospitalist mentors. Rather than lecturing, they must ask questions categorized by organ systems, pre-test probability, and "can't miss" diagnoses.
+* **Socratic Persona (`EVIDENCEFLOW_PERSONA` in [constants.ts](file:///Users/sku/drsku6/EvidenceFlowAI/constants.ts))**: Instructs the model to act as Socratic hospitalist mentors. Rather than lecturing, they must ask questions categorized by organ systems, pre-test probability, and "can't miss" diagnoses.
 * **Document Prompts (`ap.ts`, `handoff.ts`, `presentation.ts`, `stickyNote.ts`)**: Utilize a unified wrapper (`masterPrompt`) declaring the AI as "EvidenceFlow"—a clinical decision support tool. It demands:
   - Strict adherence to formatting rules (e.g., progress plans must start with a hyphen and a space).
   - Explicit grounding (no guessing clinical details not in the context).
@@ -132,7 +132,7 @@ For open-sourcing or deployment to staging/production, the following configurati
 
 ### 1. API Key Security
 * **Never commit `.env` or `.env.local` files**.
-* The project's [.gitignore](file:///Users/sku/drsku6/hippocrates/.gitignore) is pre-configured to ignore all environment files (`.env*`).
+* The project's [.gitignore](file:///Users/sku/drsku6/EvidenceFlowAI/.gitignore) is pre-configured to ignore all environment files (`.env*`).
 * During development, duplicate `.env.example` into a local-only `.env.local` file:
   ```env
   GEMINI_API_KEY=your_actual_api_key_here
@@ -141,7 +141,7 @@ For open-sourcing or deployment to staging/production, the following configurati
 
 ### 2. Clinical Data Privacy (HIPAA)
 * **Strict Prohibition of PHI/PII**: **Under no circumstances should Protected Health Information (PHI) or Personally Identifiable Information (PII) be entered into the application.** All user inputs (patient case descriptions) are transmitted to Google's Gemini API.
-* **Zero Patient Data Storing**: Hippocrates is entirely client-side. Chat logs and inputs never hit a centralized project database; they reside exclusively in the clinician's browser `localStorage`.
+* **Zero Patient Data Storing**: EvidenceFlowAI is entirely client-side. Chat logs and inputs never hit a centralized project database; they reside exclusively in the clinician's browser `localStorage`.
 * **External API Transmission**: Inputs are transmitted to Google's Gemini API endpoints. When deploying this tool in an institutional setting, ensure the Google Cloud project's data-use terms comply with your institutional HIPAA/Business Associate Agreements (BAA) so that inputs are not used for public model training.
 
 ---
@@ -152,8 +152,8 @@ For open-sourcing or deployment to staging/production, the following configurati
 Ensure you have Node.js installed on your machine.
 ```bash
 # Clone the repository (if not already local)
-git clone git@github.com:drsku6/hippocrates.git
-cd hippocrates
+git clone git@github.com:drsku6/EvidenceFlowAI.git
+cd EvidenceFlowAI
 
 # Install dependencies
 npm install

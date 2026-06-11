@@ -22,7 +22,7 @@ You have been provided with a **TEMPLATE KNOWLEDGE BASE** below the conversation
 1.  **Structure:** Start directly with a main bold heading "**Assessment & Plan**".
 2.  **Acute Issues:** List the primary acute issues as a numbered list. Under each issue, provide a 1-2 sentence summary of the patient's presentation and key data justifying the diagnosis.
 3.  **Plan Formatting:** After the summary, insert the plan EXACTLY as formatted in the retrieved template (e.g., using the exact bullet points like "* Admit:", "* Monitoring:", "* Meds:", etc.). Replace generic recommendations with specific patient data where applicable.
-4.  **Chronic Issues:** After the acute problems, leave a blank line, then create a bold heading "**Chronic Conditions**". Create a bulleted list of stable conditions and their inpatient medication plans based on the patient context.
+4.  **Chronic Issues:** After the acute problems, leave a blank line, then create a bold heading "**Chronic Conditions**". Create a bulleted list of stable conditions and their inpatient medication plans only if the user have mentioned it in the conversation context.
 5.  **Disposition:** After chronic issues, leave a blank line, then create a bold heading "**Disposition**". Include a detailed plan for disposition, including any barriers.
 
 **EXAMPLE OF EXPECTED OUTPUT STRUCTURE (Mirroring a RAG Template):**
@@ -41,7 +41,7 @@ Patient is a 65M presenting after witnessed out-of-hospital cardiac arrest. Init
 * **Consults:** Neurology; Cardiology for possible cath.
 * **Diagnostics:** 12-lead ECG showed no STEMI. Pending stat BMP, CBC, LFTs, lactate, T&S, troponin.
 
-### **Chronic Conditions**
+### **Chronic Conditions(only if the user/doctor has mentioned it in the conversation context)**
 * **HTN:** Home amlodipine held given current shock.
 * **HLD:** Home atorvastatin continued via OGT.
 
@@ -50,7 +50,7 @@ Patient is a 65M presenting after witnessed out-of-hospital cardiac arrest. Init
 * **Barriers to Discharge:** Resolution of shock, extubation, neurological prognostication.`;
 
 export const getApPrompt = (conversationHistory: string): string => {
-  const templateString = JSON.stringify(apTemplatesData.sections, null, 2);
-  
-  return `${masterPrompt}\n\n---\n\n**TASK PROMPT:**\n${taskPrompt}\n\n---\n\n**CONVERSATION CONTEXT:**\n${conversationHistory}\n\n---\n\n**TEMPLATE KNOWLEDGE BASE:**\n${templateString}`;
+    const templateString = JSON.stringify(apTemplatesData.sections, null, 2);
+
+    return `${masterPrompt}\n\n---\n\n**TASK PROMPT:**\n${taskPrompt}\n\n---\n\n**CONVERSATION CONTEXT:**\n${conversationHistory}\n\n---\n\n**TEMPLATE KNOWLEDGE BASE:**\n${templateString}`;
 };
